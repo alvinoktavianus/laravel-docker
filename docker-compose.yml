@@ -1,0 +1,46 @@
+version: "3.9"
+    
+services:
+  mariadb:
+    image: mariadb:10.6.5-focal
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: gaBdcw8yNfF8644k
+      MYSQL_DATABASE: laravel
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: laravel
+    
+  laravel:
+    depends_on:
+      - mariadb
+    image: docker.io/bitnami/laravel:8-debian-10
+    volumes:
+      - ./lara-app:/app
+    ports:
+      - "30000:3000"
+    restart: always
+    environment:
+      DB_HOST: mariadb
+      DB_USERNAME: laravel
+      DB_DATABASE: laravel
+      DB_PASSWORD: laravel
+
+  phpmyadmin:
+    depends_on:
+      - mariadb
+    image: phpmyadmin:5.1.1-apache
+    volumes:
+      - ./lara-app:/app
+    ports:
+      - "30001:80"
+    restart: always
+    environment:
+      PMA_HOSTS: mariadb
+      PMA_USER: laravel
+      PMA_PASSWORD: laravel
+
+volumes:
+  db_data: {}
+
